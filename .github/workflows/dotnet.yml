@@ -17,6 +17,10 @@ jobs:
     steps:
     - name: List files
       run: ls -R
+    - name: Print current directory
+      run: pwd
+    - name: List files
+      run: ls -al
     - uses: actions/checkout@v4
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
