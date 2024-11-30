@@ -1,0 +1,6 @@
+@ContactsIntegrator.Api_HostAddress = http://localhost:5177
+
+GET {{ContactsIntegrator.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
