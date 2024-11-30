@@ -22,6 +22,9 @@ jobs:
     - name: List files
       run: ls -al
     - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref }}  # Ensures the workflow checks out the triggering branch
+        fetch-depth: 0          # Fetches the full history
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
