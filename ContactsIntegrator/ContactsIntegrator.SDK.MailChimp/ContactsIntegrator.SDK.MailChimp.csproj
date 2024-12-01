@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContactsIntegrator.Domain\ContactsIntegrator.Domain.csproj" />
+  </ItemGroup>
+
 </Project>
