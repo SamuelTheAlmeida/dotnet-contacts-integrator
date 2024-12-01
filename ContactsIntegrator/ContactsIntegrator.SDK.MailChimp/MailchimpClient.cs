@@ -8,7 +8,7 @@ namespace ContactsIntegrator.SDK.MailChimp
 
         public async Task AddListAsync()
         {
-            var restClient = new RestClient("https://api.mailchimp.com/3.0/lists");
+            //var restClient = new RestClient("https://api.mailchimp.com/3.0/lists");
         }
     }
 }
