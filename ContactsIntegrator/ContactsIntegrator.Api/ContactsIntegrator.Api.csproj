@@ -13,4 +13,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContactsIntegrator.Application\ContactsIntegrator.Application.csproj" />
+    <ProjectReference Include="..\ContactsIntegrator.Domain\ContactsIntegrator.Domain.csproj" />
+    <ProjectReference Include="..\ContactsIntegrator.SDK.ContactsApi\ContactsIntegrator.SDK.ContactsApi.csproj" />
+    <ProjectReference Include="..\ContactsIntegrator.SDK.MailChimp\ContactsIntegrator.SDK.MailChimp.csproj" />
+  </ItemGroup>
+
 </Project>

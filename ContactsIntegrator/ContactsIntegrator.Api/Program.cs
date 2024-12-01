@@ -1,3 +1,8 @@
+using ContactsIntegrator.Domain.Interfaces.Infrastructure;
+using ContactsIntegrator.Domain.Interfaces.Services;
+using ContactsIntegrator.Domain.Services;
+using ContactsIntegrator.SDK.ContactsApi;
+using ContactsIntegrator.SDK.MailChimp;
 
 namespace ContactsIntegrator.Api
 {
@@ -14,6 +19,12 @@ namespace ContactsIntegrator.Api
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            // DI - Services
+            builder.Services.AddScoped<IContactsIntegrationService, ContactsIntegrationService>();
+
+            // DI  - Infrastructure
+            builder.Services.AddScoped<IContactsApiClient, ContactsApiClient>();
+            builder.Services.AddScoped<IMailchimpClient, MailchimpClient>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
