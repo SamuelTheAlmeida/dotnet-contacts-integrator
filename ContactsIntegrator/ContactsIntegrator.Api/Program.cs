@@ -5,6 +5,7 @@ using ContactsIntegrator.Domain.Interfaces.Services;
 using ContactsIntegrator.Domain.Services;
 using ContactsIntegrator.SDK.ContactsApi;
 using ContactsIntegrator.SDK.MailChimp;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 
@@ -71,6 +72,10 @@ namespace ContactsIntegrator.Api
             // Configure the HTTP request pipeline.
             app.UseSwagger();
             app.UseSwaggerUI();
+
+            var option = new RewriteOptions();
+            option.AddRedirect("^$", "swagger");
+            app.UseRewriter(option);
 
             app.UseHttpsRedirection();
 
