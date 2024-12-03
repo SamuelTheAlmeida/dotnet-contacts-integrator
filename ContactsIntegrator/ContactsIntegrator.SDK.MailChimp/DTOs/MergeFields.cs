@@ -2,7 +2,7 @@
 
 namespace ContactsIntegrator.SDK.MailChimp.DTOs
 {
-    public class MergeFields
+    public record MergeFields
     {
         [JsonProperty("FNAME")]
         public string FirstName { get; init; }

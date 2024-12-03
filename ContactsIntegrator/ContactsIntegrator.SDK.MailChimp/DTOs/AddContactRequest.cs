@@ -7,6 +7,7 @@ namespace ContactsIntegrator.SDK.MailChimp.DTOs
         [JsonProperty("email_address")]
         public string EmailAddress { get; init; }
 
+        [JsonProperty("status")]
         public string Status { get; init; } = MailchimpConstants.StatusSubscribed;
 
         [JsonProperty("merge_fields")]

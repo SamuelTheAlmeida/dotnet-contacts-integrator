@@ -1,35 +1,27 @@
-﻿using ContactsIntegrator.Application.DTOs;
+﻿using AutoMapper;
+using ContactsIntegrator.Application.DTOs;
 using ContactsIntegrator.Domain.Interfaces.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsIntegrator.Api.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/contacts")]
     [ApiController]
     public class ContactsController : ControllerBase
     {
         private readonly IContactsIntegrationService _contactsIntegrationService;
-        public ContactsController(IContactsIntegrationService contactsIntegrationService)
+        private readonly IMapper _mapper;
+        public ContactsController(IContactsIntegrationService contactsIntegrationService, IMapper mapper)
         {
             _contactsIntegrationService = contactsIntegrationService;
+            _mapper = mapper;
         }
 
-        [HttpGet("contacts/sync")]
+        [HttpGet("sync")]
         public async Task<ActionResult<SyncContactsResponse>> SyncContacts()
         {
-            var response = new SyncContactsResponse
-            {
-                SyncedContacts = 1,
-                Contacts = new List<SyncContactsResponse.SyncedContact>
-                {
-                    new SyncContactsResponse.SyncedContact
-                    {
-                        FirstName = "John", LastName = "Doe", Email = "johndoe@mail.com"
-                    }
-                }
-            };
-            return Ok(response);
+            var result = _mapper.Map<SyncContactsResponse>(await _contactsIntegrationService.SynchronizeContactsAsync());
+            return Ok(result);
         }
     }
 }

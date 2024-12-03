@@ -20,7 +20,7 @@ namespace ContactsIntegrator.SDK.ContactsApi
         {
             var result = new List<ExternalApiContact>();
             var httpClient = _httpClientFactory.CreateClient(nameof(ContactsApiClient));
-            var request = new HttpRequestMessage(HttpMethod.Get, "contacts");
+            var request = new HttpRequestMessage(HttpMethod.Get, "api/v1/contacts");
             var response = await httpClient.SendAsync(request);
             if (response.IsSuccessStatusCode)
             {

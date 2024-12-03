@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ContactsIntegrator.Application.DTOs;
 using ContactsIntegrator.Domain.Models.Contact;
 
 namespace ContactsIntegrator.Application.MappingProfiles
@@ -8,6 +9,7 @@ namespace ContactsIntegrator.Application.MappingProfiles
         public ContactsApiProfile()
         {
             CreateMap<SDK.ContactsApi.DTOs.Contact, ExternalApiContact>();
+            CreateMap<SyncContactsResult, SyncContactsResponse>();
         }
     }
 }

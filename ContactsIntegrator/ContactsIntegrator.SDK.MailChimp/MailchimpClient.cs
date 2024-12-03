@@ -22,8 +22,8 @@ namespace ContactsIntegrator.SDK.MailChimp
         {
             var httpClient = _httpClientFactory.CreateClient(nameof(MailchimpClient));
             var listId = "bd00329228";
-            var contactEmailMd5 = GenerateMd5Hash(contact.Email);
-            var endpoint = string.Format("lists/{0}/members,{1}", listId, contactEmailMd5);
+            var contactEmailMd5 = GenerateMd5Hash(contact.Email.ToLower());
+            var endpoint = string.Format("3.0/lists/{0}/members/{1}", listId, contactEmailMd5);
             var request = new HttpRequestMessage(HttpMethod.Put, endpoint);
 
             var addContactRequest = _mapper.Map<AddContactRequest>(contact);
