@@ -9,11 +9,7 @@ namespace ContactsIntegrator.UnitTests.SDKTests
 {
     public class ContactsApiTests : TestDependencies
     {
-        private Mock<IHttpClientFactory> _httpClientFactoryMock;
-        public ContactsApiTests()
-        {
-            _httpClientFactoryMock = new Mock<IHttpClientFactory>();
-        }
+        private readonly Mock<IHttpClientFactory> _httpClientFactoryMock = new();
 
         [Fact]
         public async Task ContactsApi_GetContactsAsync_ReturnsContacts()

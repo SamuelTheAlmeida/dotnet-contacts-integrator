@@ -7,17 +7,17 @@ namespace ContactsIntegrator.Domain.Models.Contact
         /// <summary>
         /// First name of the contact
         /// </summary>
-        public string FirstName { get; set; }
+        public string FirstName { get; init; }
 
         /// <summary>
         /// Last name of the contact
         /// </summary>
-        public string LastName { get; set; }
+        public string LastName { get; init; }
 
         /// <summary>
         /// Email of the contact
         /// </summary>
         [EmailAddress]
-        public string Email { get; set; }
+        public string Email { get; init; }
     }
 }
