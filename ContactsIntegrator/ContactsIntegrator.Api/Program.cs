@@ -6,6 +6,7 @@ using ContactsIntegrator.Domain.Services;
 using ContactsIntegrator.SDK.ContactsApi;
 using ContactsIntegrator.SDK.MailChimp;
 using Microsoft.Net.Http.Headers;
+using Microsoft.OpenApi.Models;
 
 namespace ContactsIntegrator.Api
 {
@@ -20,7 +21,20 @@ namespace ContactsIntegrator.Api
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Contacts Integrator API",
+                    Description = "An API for synchronizing contacts from an external API source to a Mailchimp list",
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Samuel T Almeida",
+                        Url = new Uri("https://github.com/SamuelTheAlmeida")
+                    }
+                });
+            });
 
             // Http Clients
             builder.Services.AddHttpClient(nameof(ContactsApiClient), httpClient =>
@@ -55,16 +69,12 @@ namespace ContactsIntegrator.Api
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
+            app.UseSwagger();
+            app.UseSwaggerUI();
 
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
-
 
             app.MapControllers();
 
