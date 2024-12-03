@@ -3,38 +3,34 @@ using ContactsIntegrator.Domain.Interfaces.Infrastructure;
 using ContactsIntegrator.Domain.Models.Contact;
 using ContactsIntegrator.SDK.ContactsApi.DTOs;
 using Newtonsoft.Json;
-using RestSharp;
 
 namespace ContactsIntegrator.SDK.ContactsApi
 {
     public class ContactsApiClient : IContactsApiClient
     {
         private readonly IMapper _mapper;
-        private readonly IRestClient _restClient;
-        public ContactsApiClient(IMapper mapper)
+        private readonly IHttpClientFactory _httpClientFactory;
+        public ContactsApiClient(IMapper mapper, IHttpClientFactory httpClientFactory)
         {
             _mapper = mapper;
-
-            var options = new RestClientOptions("https://challenge.trio.dev/api/v1");
-            _restClient = new RestClient(options);
+            _httpClientFactory = httpClientFactory;
         }
 
         public async Task<IEnumerable<ExternalApiContact>> GetContactsAsync()
         {
             var result = new List<ExternalApiContact>();
-
-            var request = new RestRequest("contacts");
-            var response = await _restClient.ExecuteAsync(request);
-            var isSuccess = response is { IsSuccessful: true, Content: not null };
-            if (isSuccess)
+            var httpClient = _httpClientFactory.CreateClient(nameof(ContactsApiClient));
+            var request = new HttpRequestMessage(HttpMethod.Get, "contacts");
+            var response = await httpClient.SendAsync(request);
+            if (response.IsSuccessStatusCode)
             {
-                var responseContacts = JsonConvert.DeserializeObject<List<Contact>>(response.Content);
+                var responseString = await response.Content.ReadAsStringAsync();
+                var responseContacts = JsonConvert.DeserializeObject<List<Contact>>(responseString);
                 result = _mapper.Map<List<ExternalApiContact>>(responseContacts);
-
             }
             else
             {
-                Console.WriteLine($"Failed to get contacts from external API - Response code {response.StatusCode} - {response.StatusDescription}");
+                Console.WriteLine($"Failed to get contacts from external API - Response code {response.StatusCode} - {response.ReasonPhrase}");
             }
 
             return result;
