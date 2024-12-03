@@ -39,10 +39,7 @@ namespace ContactsIntegrator.Api
             builder.Services.AddScoped<IContactsIntegrationService, ContactsIntegrationService>();
 
             // DI  - Infrastructure
-            builder.Services.AddScoped<IContactsApiClient, ContactsApiClient>(serviceProvider =>
-            {
-                return new ContactsApiClient(serviceProvider.GetRequiredService<IMapper>(), new HttpClient())
-            });
+            builder.Services.AddScoped<IContactsApiClient, ContactsApiClient>();
             builder.Services.AddScoped<IMailchimpClient, MailchimpClient>();
             var app = builder.Build();
 
