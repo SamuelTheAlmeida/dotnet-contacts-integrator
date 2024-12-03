@@ -1,6 +1,7 @@
 ﻿using ContactsIntegrator.Api.Controllers;
 using ContactsIntegrator.Application.DTOs;
 using ContactsIntegrator.Domain.Interfaces.Services;
+using ContactsIntegrator.Domain.Models.Contact;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using Xunit;
@@ -20,6 +21,19 @@ namespace ContactsIntegrator.UnitTests.ControllerTests
             // Arrange
             var contactsIntegrationServiceMock = new Mock<IContactsIntegrationService>();
             var controller = new ContactsController(contactsIntegrationServiceMock.Object, Mapper);
+            contactsIntegrationServiceMock.Setup(x => x.SynchronizeContactsAsync()).ReturnsAsync(new SyncContactsResult
+            {
+                SyncedContacts = 1,
+                Contacts =
+                [
+                    new MailchimpContact
+                    {
+                        Email = "johndoe@test.com",
+                        FirstName = "John",
+                        LastName = "Doe"
+                    }
+                ]
+            });
 
             // Act
             var response = await controller.SyncContacts();
