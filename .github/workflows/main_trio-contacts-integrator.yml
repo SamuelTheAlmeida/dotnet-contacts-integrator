@@ -31,7 +31,7 @@ jobs:
       with:
         push: true
         tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_02bc6a5fdb484194a4d805ba5c7b161e }}/contactsintegrator:${{ github.sha }}
-        file: ./Dockerfile
+        file: ./ContactsIntegrator/ContactsIntegrator.Api/Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
