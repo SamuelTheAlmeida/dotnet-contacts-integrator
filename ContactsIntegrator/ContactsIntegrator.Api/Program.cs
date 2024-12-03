@@ -1,8 +1,10 @@
+using AutoMapper;
 using ContactsIntegrator.Domain.Interfaces.Infrastructure;
 using ContactsIntegrator.Domain.Interfaces.Services;
 using ContactsIntegrator.Domain.Services;
 using ContactsIntegrator.SDK.ContactsApi;
 using ContactsIntegrator.SDK.MailChimp;
+using Microsoft.Net.Http.Headers;
 
 namespace ContactsIntegrator.Api
 {
@@ -18,6 +20,20 @@ namespace ContactsIntegrator.Api
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            // Http Clients
+            builder.Services.AddHttpClient(nameof(ContactsApiClient), httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://challenge.trio.dev/api/v1"); // TODO fetch from config
+            });
+
+            builder.Services.AddHttpClient(nameof(MailchimpClient), httpClient =>
+            {
+                httpClient.BaseAddress = new Uri("https://us15.api.mailchimp.com/3.0"); // TODO fetch from config
+
+                httpClient.DefaultRequestHeaders.Add(
+                    HeaderNames.Authorization, "Bearer 25d078d164f976c2000a77d94959db61-us15"); //TODO fetch from config
+            });
 
             // DI - Services
             builder.Services.AddScoped<IContactsIntegrationService, ContactsIntegrationService>();

@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using ContactsIntegrator.Domain.Models.Contact;
 
 namespace ContactsIntegrator.Domain.Interfaces.Services
 {
     public interface IContactsIntegrationService
     {
+        Task<SyncContactsResult> SynchronizeContactsAsync();
     }
 }
