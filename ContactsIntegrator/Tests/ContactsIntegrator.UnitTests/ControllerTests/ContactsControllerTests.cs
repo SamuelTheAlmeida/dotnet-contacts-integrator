@@ -7,7 +7,7 @@ using Xunit;
 
 namespace ContactsIntegrator.UnitTests.ControllerTests
 {
-    public class ContactsControllerTests
+    public class ContactsControllerTests : TestDependencies
     {
         public ContactsControllerTests()
         {
@@ -19,7 +19,7 @@ namespace ContactsIntegrator.UnitTests.ControllerTests
         {
             // Arrange
             var contactsIntegrationServiceMock = new Mock<IContactsIntegrationService>();
-            var controller = new ContactsController(contactsIntegrationServiceMock.Object);
+            var controller = new ContactsController(contactsIntegrationServiceMock.Object, Mapper);
 
             // Act
             var response = await controller.SyncContacts();

@@ -1,4 +1,5 @@
 using AutoMapper;
+using ContactsIntegrator.Application.MappingProfiles;
 using ContactsIntegrator.Domain.Interfaces.Infrastructure;
 using ContactsIntegrator.Domain.Interfaces.Services;
 using ContactsIntegrator.Domain.Services;
@@ -24,16 +25,26 @@ namespace ContactsIntegrator.Api
             // Http Clients
             builder.Services.AddHttpClient(nameof(ContactsApiClient), httpClient =>
             {
-                httpClient.BaseAddress = new Uri("https://challenge.trio.dev/api/v1"); // TODO fetch from config
+                httpClient.BaseAddress = new Uri("https://challenge.trio.dev"); // TODO fetch from config
             });
 
             builder.Services.AddHttpClient(nameof(MailchimpClient), httpClient =>
             {
-                httpClient.BaseAddress = new Uri("https://us15.api.mailchimp.com/3.0"); // TODO fetch from config
+                httpClient.BaseAddress = new Uri("https://us15.api.mailchimp.com"); // TODO fetch from config
 
                 httpClient.DefaultRequestHeaders.Add(
                     HeaderNames.Authorization, "Bearer 25d078d164f976c2000a77d94959db61-us15"); //TODO fetch from config
             });
+
+            // AutoMapper
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new ContactsApiProfile());
+                mc.AddProfile(new MailchimpProfile());
+            });
+
+            IMapper mapper = mapperConfig.CreateMapper();
+            builder.Services.AddSingleton(mapper);
 
             // DI - Services
             builder.Services.AddScoped<IContactsIntegrationService, ContactsIntegrationService>();

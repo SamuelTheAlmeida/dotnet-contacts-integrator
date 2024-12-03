@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using ContactsIntegrator.Application.DTOs;
 using ContactsIntegrator.Domain.Models.Contact;
 using ContactsIntegrator.SDK.MailChimp.DTOs;
 
@@ -9,9 +10,19 @@ namespace ContactsIntegrator.Application.MappingProfiles
         public MailchimpProfile()
         {
             CreateMap<MailchimpContact, AddContactRequest>()
-                .ForMember(dest => dest.Status, opt => opt.Ignore());
+                .ForMember(dest => dest.Status, opt => opt.Ignore())
+                .ForMember(dest => dest.MergeFields, opt => opt.MapFrom(src => src))
+                .ForMember(dest => dest.EmailAddress, opt => opt.MapFrom(src => src.Email));
 
-            CreateMap<MailchimpContact, MergeFields>();
+            CreateMap<MailchimpContact, MergeFields>()
+                .ReverseMap();
+
+            CreateMap<AddContactResponse, MailchimpContact>()
+                .ForMember(dest => dest.Email, opt => opt.MapFrom(src => src.Email))
+                .ForMember(dest => dest.FirstName, opt => opt.MapFrom(src => src.MergeFields.FirstName))
+                .ForMember(dest => dest.LastName, opt => opt.MapFrom(src => src.MergeFields.LastName));
+
+            CreateMap<MailchimpContact, SyncContactsResponse.SyncedContact>();
         }
     }
 }

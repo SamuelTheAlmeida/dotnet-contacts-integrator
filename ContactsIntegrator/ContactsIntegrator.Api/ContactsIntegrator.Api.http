@@ -1,6 +1,6 @@
-@ContactsIntegrator.Api_HostAddress = http://localhost:5177
+@ContactsIntegrator.Api_HostAddress = https://localhost:7232
 
-GET {{ContactsIntegrator.Api_HostAddress}}/weatherforecast/
+GET {{ContactsIntegrator.Api_HostAddress}}/api/contacts/sync
 Accept: application/json
 
 ###

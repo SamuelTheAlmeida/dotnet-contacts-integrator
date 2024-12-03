@@ -25,7 +25,7 @@ namespace ContactsIntegrator.Domain.Services
                 {
                     Email = externalApiContact.Email,
                     FirstName = externalApiContact.FirstName,
-                    LastName = externalApiContact.LastName
+                    LastName = externalApiContact.LastName,
                 };
                 var syncResult = await _mailchimpClient.AddContactAsync(mailchimpContact);
                 if (syncResult != null)
