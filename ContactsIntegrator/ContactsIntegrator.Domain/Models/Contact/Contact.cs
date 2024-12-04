@@ -2,7 +2,7 @@
 
 namespace ContactsIntegrator.Domain.Models.Contact
 {
-    public record ExternalApiContact
+    public record Contact
     {
         /// <summary>
         /// Creation date of the contact

@@ -10,6 +10,6 @@
         /// <summary>
         /// List of contacts that were synced
         /// </summary>
-        public IList<MailchimpContact> Contacts { get; set; } = new List<MailchimpContact>();
+        public IList<Contact> Contacts { get; set; } = new List<Contact>();
     }
 }

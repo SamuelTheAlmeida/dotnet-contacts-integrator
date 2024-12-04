@@ -10,13 +10,8 @@ namespace ContactsIntegrator.UnitTests.ControllerTests
 {
     public class ContactsControllerTests : TestDependencies
     {
-        public ContactsControllerTests()
-        {
-            
-        }
-
         [Fact]
-        public async Task SyncContacts_Success()
+        public async Task GetSyncContacts_ShouldCallService()
         {
             // Arrange
             var contactsIntegrationServiceMock = new Mock<IContactsIntegrationService>();
@@ -26,7 +21,7 @@ namespace ContactsIntegrator.UnitTests.ControllerTests
                 SyncedContacts = 1,
                 Contacts =
                 [
-                    new MailchimpContact
+                    new Contact
                     {
                         Email = "johndoe@test.com",
                         FirstName = "John",
@@ -44,6 +39,7 @@ namespace ContactsIntegrator.UnitTests.ControllerTests
             var returnedItem = Assert.IsType<SyncContactsResponse>(okResult.Value);
             Assert.NotNull(okResult);
             Assert.NotEmpty(returnedItem.Contacts);
+            contactsIntegrationServiceMock.Verify(x => x.SynchronizeContactsAsync(), Times.Once);
         }
 
     }

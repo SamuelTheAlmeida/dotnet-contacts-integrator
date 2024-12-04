@@ -4,6 +4,6 @@ namespace ContactsIntegrator.Domain.Interfaces.Infrastructure
 {
     public interface IMailchimpClient
     {
-        Task<MailchimpContact?> AddContactAsync(MailchimpContact contact);
+        Task<Contact?> AddContactAsync(Contact contact);
     }
 }
