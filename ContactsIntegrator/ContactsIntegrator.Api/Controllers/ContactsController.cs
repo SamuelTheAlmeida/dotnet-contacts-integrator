@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ContactsIntegrator.Api.Controllers
 {
-    [Route("api/contacts")]
+    [Route("contacts")]
     [ApiController]
     public class ContactsController : ControllerBase
     {

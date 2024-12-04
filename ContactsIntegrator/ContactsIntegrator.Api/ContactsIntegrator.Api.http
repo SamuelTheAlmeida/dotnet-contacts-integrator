@@ -1,6 +1,6 @@
 @ContactsIntegrator.Api_HostAddress = https://localhost:7232
 
-GET {{ContactsIntegrator.Api_HostAddress}}/api/contacts/sync
+GET {{ContactsIntegrator.Api_HostAddress}}/contacts/sync
 Accept: application/json
 
 ###
