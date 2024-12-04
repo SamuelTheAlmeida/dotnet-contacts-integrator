@@ -1,4 +1,5 @@
 using AutoMapper;
+using ContactsIntegrator.Api.Middlewares;
 using ContactsIntegrator.Application.MappingProfiles;
 using ContactsIntegrator.Domain.Interfaces.Infrastructure;
 using ContactsIntegrator.Domain.Interfaces.Services;
@@ -16,9 +17,10 @@ namespace ContactsIntegrator.Api
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Logging.ClearProviders();
+            builder.Logging.AddConsole();
 
             // Add services to the container.
-
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -37,20 +39,6 @@ namespace ContactsIntegrator.Api
                 });
             });
 
-            // Http Clients
-            builder.Services.AddHttpClient(nameof(ContactsApiClient), httpClient =>
-            {
-                httpClient.BaseAddress = new Uri("https://challenge.trio.dev"); // TODO fetch from config
-            });
-
-            builder.Services.AddHttpClient(nameof(MailchimpClient), httpClient =>
-            {
-                httpClient.BaseAddress = new Uri("https://us15.api.mailchimp.com"); // TODO fetch from config
-
-                httpClient.DefaultRequestHeaders.Add(
-                    HeaderNames.Authorization, "Bearer 25d078d164f976c2000a77d94959db61-us15"); //TODO fetch from config
-            });
-
             // AutoMapper
             var mapperConfig = new MapperConfiguration(mc =>
             {
@@ -67,6 +55,15 @@ namespace ContactsIntegrator.Api
             // DI  - Infrastructure
             builder.Services.AddScoped<IContactsApiClient, ContactsApiClient>();
             builder.Services.AddScoped<IMailchimpClient, MailchimpClient>();
+
+            // Setup External API Clients with configuration
+            ConfigureMailchimpClient(builder.Services, builder.Configuration);
+            ConfigureContactsApiClient(builder.Services, builder.Configuration);
+
+            // Exception Handler middleware
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -83,7 +80,45 @@ namespace ContactsIntegrator.Api
 
             app.MapControllers();
 
+            app.UseExceptionHandler();
+
             app.Run();
+        }
+
+        private static void ConfigureMailchimpClient(IServiceCollection serviceCollection, IConfiguration configuration)
+        {
+            var settings = new MailchimpSettings();
+            configuration.GetSection(nameof(MailchimpSettings)).Bind(settings);
+            serviceCollection.AddSingleton(settings);
+
+            serviceCollection.AddHttpClient(nameof(MailchimpClient), httpClient =>
+            {
+                if (string.IsNullOrEmpty(settings.BaseUrl))
+                {
+                    throw new ArgumentException("Missing config MailchimpSettings:BaseUrl");
+                }
+
+                httpClient.BaseAddress = new Uri(settings.BaseUrl);
+
+                httpClient.DefaultRequestHeaders.Add(
+                    HeaderNames.Authorization, $"Bearer {settings.ApiKey}");
+            });
+        }
+
+        private static void ConfigureContactsApiClient(IServiceCollection serviceCollection, IConfiguration configuration)
+        {
+            var settings = new ContactsApiSettings();
+            configuration.GetSection(nameof(ContactsApiSettings)).Bind(settings);
+            serviceCollection.AddSingleton(settings);
+
+            serviceCollection.AddHttpClient(nameof(ContactsApiClient), httpClient =>
+            {
+                if (string.IsNullOrEmpty(settings.BaseUrl))
+                {
+                    throw new ArgumentException("Missing config ContactsApiSettings:BaseUrl");
+                }
+                httpClient.BaseAddress = new Uri(settings.BaseUrl);
+            });
         }
     }
 }

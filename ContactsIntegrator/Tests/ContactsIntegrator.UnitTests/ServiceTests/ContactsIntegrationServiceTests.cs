@@ -8,19 +8,14 @@ namespace ContactsIntegrator.UnitTests.ServiceTests
 {
     public class ContactsIntegrationServiceTests
     {
-        public ContactsIntegrationServiceTests()
-        {
-            
-        }
-
         [Fact]
         public async Task SynchronizeContacts_Success_ShouldSyncContactsToMailchimp()
         {
             // Arrange
             var contactsApiClientMock = new Mock<IContactsApiClient>();
-            contactsApiClientMock.Setup(x => x.GetContactsAsync()).ReturnsAsync(new List<ExternalApiContact>
+            contactsApiClientMock.Setup(x => x.GetContactsAsync()).ReturnsAsync(new List<Contact>
             {
-                new ExternalApiContact
+                new Contact
                 {
                     Avatar = "https://test.com/avatar.jpg",
                     CreatedAt = DateTime.Now.AddDays(-1),
@@ -32,7 +27,7 @@ namespace ContactsIntegrator.UnitTests.ServiceTests
             });
 
             var mailchimpClientMock = new Mock<IMailchimpClient>();
-            mailchimpClientMock.Setup(x => x.AddContactAsync(It.IsAny<MailchimpContact>())).ReturnsAsync(new MailchimpContact
+            mailchimpClientMock.Setup(x => x.AddContactAsync(It.IsAny<Contact>())).ReturnsAsync(new Contact
             {
                 Email = "test1@mail.com",
                 FirstName = "Test",
@@ -50,7 +45,30 @@ namespace ContactsIntegrator.UnitTests.ServiceTests
             Assert.Equal(1, result.SyncedContacts);
             Assert.Equal("test1@mail.com", result.Contacts[0].Email);
             contactsApiClientMock.Verify(x => x.GetContactsAsync(), Times.Once);
-            mailchimpClientMock.Verify(x => x.AddContactAsync(It.IsAny<MailchimpContact>()), Times.Once);
+            mailchimpClientMock.Verify(x => x.AddContactAsync(It.IsAny<Contact>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task SynchronizeContacts_WhenNoContactsToSync_ShouldReturnEmptyList_AndNotCallMailchimp()
+        {
+            // Arrange
+            var contactsApiClientMock = new Mock<IContactsApiClient>();
+            contactsApiClientMock.Setup(x => x.GetContactsAsync()).ReturnsAsync(new List<Contact>
+            {
+            });
+
+            var mailchimpClientMock = new Mock<IMailchimpClient>();
+            var contactsIntegrationService = new ContactsIntegrationService(contactsApiClientMock.Object, mailchimpClientMock.Object);
+
+            // Act
+            var result = await contactsIntegrationService.SynchronizeContactsAsync();
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Empty(result.Contacts);
+            Assert.Equal(0, result.SyncedContacts);
+            contactsApiClientMock.Verify(x => x.GetContactsAsync(), Times.Once);
+            mailchimpClientMock.Verify(x => x.AddContactAsync(It.IsAny<Contact>()), Times.Never);
         }
     }
 }

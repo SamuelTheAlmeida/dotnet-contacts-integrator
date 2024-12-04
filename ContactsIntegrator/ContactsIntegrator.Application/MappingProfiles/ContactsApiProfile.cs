@@ -8,7 +8,7 @@ namespace ContactsIntegrator.Application.MappingProfiles
     {
         public ContactsApiProfile()
         {
-            CreateMap<SDK.ContactsApi.DTOs.Contact, ExternalApiContact>();
+            CreateMap<SDK.ContactsApi.DTOs.Contact, Contact>();
             CreateMap<SyncContactsResult, SyncContactsResponse>();
         }
     }

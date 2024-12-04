@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using ContactsIntegrator.Domain.Interfaces.Infrastructure;
-using ContactsIntegrator.Domain.Models.Contact;
-using ContactsIntegrator.SDK.ContactsApi.DTOs;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Contact = ContactsIntegrator.Domain.Models.Contact.Contact;
 
 namespace ContactsIntegrator.SDK.ContactsApi
 {
@@ -10,30 +10,41 @@ namespace ContactsIntegrator.SDK.ContactsApi
     {
         private readonly IMapper _mapper;
         private readonly IHttpClientFactory _httpClientFactory;
-        public ContactsApiClient(IMapper mapper, IHttpClientFactory httpClientFactory)
+        private readonly ContactsApiSettings _contactsApiSettings;
+        private readonly ILogger<ContactsApiClient> _logger;
+        public ContactsApiClient(IMapper mapper, IHttpClientFactory httpClientFactory, ContactsApiSettings contactsApiSettings, ILogger<ContactsApiClient> logger)
         {
             _mapper = mapper;
             _httpClientFactory = httpClientFactory;
+            _contactsApiSettings = contactsApiSettings;
+            _logger = logger;
         }
 
-        public async Task<IEnumerable<ExternalApiContact>> GetContactsAsync()
+        public async Task<IEnumerable<Contact>> GetContactsAsync()
         {
-            var result = new List<ExternalApiContact>();
-            var httpClient = _httpClientFactory.CreateClient(nameof(ContactsApiClient));
-            var request = new HttpRequestMessage(HttpMethod.Get, "api/v1/contacts");
-            var response = await httpClient.SendAsync(request);
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var responseString = await response.Content.ReadAsStringAsync();
-                var responseContacts = JsonConvert.DeserializeObject<List<Contact>>(responseString);
-                result = _mapper.Map<List<ExternalApiContact>>(responseContacts);
-            }
-            else
-            {
-                Console.WriteLine($"Failed to get contacts from external API - Response code {response.StatusCode} - {response.ReasonPhrase}");
-            }
+                List<Contact> result;
+                var httpClient = _httpClientFactory.CreateClient(nameof(ContactsApiClient));
+                var request = new HttpRequestMessage(HttpMethod.Get, _contactsApiSettings.GetContactsEndpoint);
+                var response = await httpClient.SendAsync(request);
+                if (response.IsSuccessStatusCode)
+                {
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    var responseContacts = JsonConvert.DeserializeObject<List<DTOs.Contact>>(responseString);
+                    result = _mapper.Map<List<Contact>>(responseContacts);
+                }
+                else
+                    throw new HttpRequestException($"{response.StatusCode} - {response.ReasonPhrase}");
 
-            return result;
+                return result;
+            }
+            catch (Exception ex)
+            {
+                var errorMessage = $"Failed to fetch contacts from external API: {ex.Message}";
+                _logger.LogError(ex, errorMessage);
+                throw new Exception(errorMessage, ex);
+            }
         }
     }
 }

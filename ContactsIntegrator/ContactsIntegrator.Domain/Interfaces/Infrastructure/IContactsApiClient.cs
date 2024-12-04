@@ -4,6 +4,6 @@ namespace ContactsIntegrator.Domain.Interfaces.Infrastructure
 {
     public interface IContactsApiClient
     {
-        Task<IEnumerable<ExternalApiContact>> GetContactsAsync();
+        Task<IEnumerable<Contact>> GetContactsAsync();
     }
 }
